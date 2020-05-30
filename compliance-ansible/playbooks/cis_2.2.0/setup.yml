@@ -1,0 +1,14 @@
+---
+- name: Create Results Directory
+  file:
+    path: ./results/
+    owner: auditor
+    state: directory
+
+- name: Create Results File(s)
+  copy:
+    content: "Check Number - Result"
+    dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+    owner: auditor
+  delegate_to: localhost
+  check_mode: False

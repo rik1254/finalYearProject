@@ -1,0 +1,25 @@
+---
+- name: 1.4.2 Ensure bootloader password is set
+  shell: 'grep "^GRUB2_PASSWORD" /boot/grub2/grub.cfg | cat'
+  register: result
+  check_mode: False
+
+- name: To File
+  block:
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.4.2 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result.stdout == ''
+
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.4.2 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result.stdout != ''

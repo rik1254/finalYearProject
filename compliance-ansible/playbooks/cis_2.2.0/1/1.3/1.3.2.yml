@@ -1,0 +1,29 @@
+---
+- name: 1.3.2 Ensure filesystem integrity is regularly checked
+  cron:
+    name: Check filesystem ingetrity
+    minute: '0'
+    hour: '5'
+    job: "/usr/sbin/aide --check"
+  register: result
+
+
+- name: To File
+  block:
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.3.2 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result is not succeeded
+
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.3.2 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result is succeeded

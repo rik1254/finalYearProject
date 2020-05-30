@@ -1,0 +1,25 @@
+---
+- name: 1.1.2 Ensure separate partition exists for /tmp
+  shell: 'mount | grep /tmp | cat'
+  register: result
+  check_mode: False
+
+- name: To File
+  block:
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.1.2 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result.stdout == ''
+
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.1.2 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result.stdout != ''

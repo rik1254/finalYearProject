@@ -1,0 +1,39 @@
+---
+- name: 2.2.15 Ensure mail transfer agent is configured for local-only mode
+  replace:
+    path: /etc/postfix/main.cf
+    regexp: '\d*inet_interfaces.*'
+    replace: 'inet_interfaces = localhost'
+  register: result
+
+- debug:
+    msg: "{{ result.msg }}"
+
+
+- name: Success To File
+  block:
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "2.2.15 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: (result is skipped) or (result.enabled == false)
+  rescue:
+    - debug:
+        msg: "Wasn't successful"
+
+- name: Fail To File
+  block:
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "2.2.15 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: (result is not skipped) or (result.enabled)
+  rescue:
+    - debug:
+        msg: "Was successful"

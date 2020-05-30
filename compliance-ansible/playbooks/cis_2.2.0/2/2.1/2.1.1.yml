@@ -1,0 +1,49 @@
+---
+- name: 2.1.1 Ensure chargen services are not enabled
+  block:
+    - name: Check if chargen-dgram exists
+      stat: "path=/etc/xintd.d/{{ item }}"
+      loop:
+        - chargen-dgram
+        - chargen-stream
+      register: exists
+
+    - name: Disable if exists
+      service:
+        name: "{{ item }}"
+        state: stopped
+        enabled: no
+      loop:
+        - chargen-dgram
+        - chargen-stream
+      when: exists.results[0].stat.exists
+      register: result
+
+
+- name: Success To File
+  block:
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "2.1.1 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: (result is skipped) or (result.enabled == false)
+  rescue:
+    - debug:
+        msg: "Wasn't successful"
+
+- name: Fail To File
+  block:
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "2.1.1 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: (result is not skipped) or (result.enabled)
+  rescue:
+    - debug:
+        msg: "Was successful"

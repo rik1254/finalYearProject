@@ -1,0 +1,35 @@
+---
+- name: 2.2.6 Ensure LDAP Server is not enabled
+  block:
+    - name: Check if LDAP exists
+      stat: path=/usr/lib/systemd/system/slapd.service
+      register: exists
+
+    - name: Disable if exists
+      service:
+        name: slapd
+        state: stopped
+        enabled: no
+      when: exists.stat.exists
+      register: result
+
+
+- name: To File
+  block:
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "2.2.6 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: (result is skipped) or (result.rc == 0)
+
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "2.2.6 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: (result is not skipped)

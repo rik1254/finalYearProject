@@ -1,0 +1,68 @@
+---
+- name: 2.2.7 Ensure NFS and RPC are not enabled
+  block:
+    - name: Check if NFS exists
+      stat: path=/usr/lib/systemd/system/nfs.service
+      register: exists1
+
+    - name: Disable if exists
+      service:
+        name: nfs
+        state: stopped
+        enabled: no
+      when: exists1.stat.exists
+      register: result1
+
+
+    - name: Check if NFS Server exists
+      stat: path=/usr/lib/systemd/system/nfs-server.service
+      register: exists2
+
+    - name: Disable if exists
+      service:
+        name: nfs-server
+        state: stopped
+        enabled: no
+      when: exists2.stat.exists
+      register: result2
+
+
+    - name: Check if RPC exists
+      stat: path=/usr/lib/systemd/system/rpcbind.service
+      register: exists3
+
+    - name: Disable if exists
+      service:
+        name: rpcbind
+        state: stopped
+        enabled: no
+      when: exists3.stat.exists
+      register: result3
+
+
+
+- name: To File
+  block:
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "2.2.7 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: >-
+        ((result1 is skipped) or (result1.enabled == false)) and
+        ((result2 is skipped) or (result2.enabled == false)) and
+        ((result3 is skipped) or (result3.enabled == false))
+
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "2.2.7 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: >- 
+        (result1.enabled == true) or 
+        (result2.enabled == true) or 
+        (result3.enabled == true)

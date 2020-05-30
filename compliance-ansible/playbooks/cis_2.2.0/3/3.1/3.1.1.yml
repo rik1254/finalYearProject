@@ -1,0 +1,34 @@
+---
+- name: 3.1.1 Ensure IP forwarding is disabled
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '0'
+    state: present
+  register: result
+
+
+- name: 3.1.1 Ensure IP forwarding is disabled in active kernel parameters
+  command: "{{ item }}"
+  with_items:
+    - "sysctl -w net.ipv4.ip_forward=0"
+    - "sysctl -w net.ipv4.route.flush=1"
+  register: result
+
+
+- name: Success To File
+  lineinfile:
+    dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+    line: "2.2.21 success"
+    insertafter: EOF
+  delegate_to: localhost
+  check_mode: False
+  when: (result.msg == "All items completed")
+
+- name: Fail To File
+  lineinfile:
+    dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+    line: "2.2.21 failed"
+    insertafter: EOF
+  delegate_to: localhost
+  check_mode: False
+  when: (result.msg != "All items completed")

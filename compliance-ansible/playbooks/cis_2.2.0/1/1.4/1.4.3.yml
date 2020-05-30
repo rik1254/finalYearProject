@@ -1,0 +1,36 @@
+---
+- name: 1.4.3 Ensure authentication required for single user mode
+  block:
+    - name: Checking authentication in rescue.service
+      replace:
+        path: /usr/lib/systemd/system/rescue.service
+        regexp: '\d*ExecStart=-/bin/sh.*'
+        replace: 'ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"'
+
+    - name: Checking authentication in emergency.service
+      replace:
+        path: /usr/lib/systemd/system/emergency.service
+        regexp: '\d*ExecStart=-/bin/sh.*'
+        replace: 'ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"'
+      register: result
+
+
+- name: To File
+  block:
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.4.3 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result is not succeeded
+
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.4.3 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result is succeeded

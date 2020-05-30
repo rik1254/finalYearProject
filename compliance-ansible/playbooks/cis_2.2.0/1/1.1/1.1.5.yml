@@ -1,0 +1,26 @@
+---
+- name: 1.1.5 Ensure noexec option set on /tmp partition
+  shell: 'mount | grep /tmp | grep noexec | cat'
+  register: result
+  check_mode: False
+
+
+- name: To File
+  block:
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.1.5 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result.stdout == ''
+
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.1.5 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result.stdout != ''

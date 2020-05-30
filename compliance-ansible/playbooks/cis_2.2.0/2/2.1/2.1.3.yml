@@ -1,0 +1,49 @@
+---
+- name: 2.1.3 Ensure discard services are not enabled
+  block:
+    - name: Check if discard-dgram exists
+      stat: "path=/etc/xintd.d/{{ item }}"
+      loop:
+        - discard-dgram
+        - discard-stream
+      register: exists
+
+    - name: Disable if exists
+      service:
+        name: "{{ item }}"
+        state: stopped
+        enabled: no
+      loop:
+        - discard-dgram
+        - discard-stream
+      when: exists.results[0].stat.exists
+      register: result
+
+
+- name: Success To File
+  block:
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "2.1.3 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: (result is skipped) or (result.enabled == false)
+  rescue:
+    - debug:
+        msg: "Wasn't successful"
+
+- name: Fail To File
+  block:
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "2.1.3 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: (result is not skipped) or (result.enabled)
+  rescue:
+    - debug:
+        msg: "Was successful"

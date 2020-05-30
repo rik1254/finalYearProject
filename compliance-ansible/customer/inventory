@@ -1,0 +1,8 @@
+[all]
+master.foo.local
+target1.foo.local
+target2.foo.local
+
+[targets]
+192.168.2.111
+target2.foo.local

@@ -1,0 +1,34 @@
+---
+- name: 1.1.21 Ensure sticky bit is set on all world-writable directories
+  block:
+    - name: Finding files
+      shell: df --local -P | awk {'if (NR!=1) print $6'} | xargs -I '{}' find '{}' -xdev -type d \( -perm -0002 -a ! -perm -1000 \) 2>/dev/null
+      register: result
+
+    - name: Fixing files
+      file:
+        path: "{{ item }}"
+        mode: g+s
+      with_items: "{{ result.stdout_lines }}"
+
+
+
+- name: To File
+  block:
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.1.21 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result is not succeeded
+
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.1.21 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result is succeeded

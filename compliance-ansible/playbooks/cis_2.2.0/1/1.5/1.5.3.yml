@@ -1,0 +1,36 @@
+---
+- name: 1.5.3 Ensure address space layout randomization (ASLR) is enabled
+  block:
+    - name: Configuring ASLR
+      lineinfile:
+        dest: /etc/security/limits.conf
+        line: "kernel.randomize_va_space = 2"
+        insertafter: EOF
+      register: result
+
+    - name: Restarting process
+      shell: 'sysctl -w kernel.randomize_va_space=2'
+      when: result is succeeded
+      register: result
+
+
+
+- name: To File
+  block:
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.5.3 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result is not succeeded
+
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.5.3 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result is succeeded

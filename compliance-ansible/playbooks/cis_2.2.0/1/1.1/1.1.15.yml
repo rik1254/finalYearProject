@@ -1,0 +1,26 @@
+---
+- name: 1.1.15 Ensure nodev option set on /dev/shm partition
+  shell: 'mount | grep /dev/shm | grep nodev | cat'
+  register: result
+  check_mode: False
+
+
+- name: To File
+  block:
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.1.15 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result.stdout == ''
+
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.1.15 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result.stdout != ''

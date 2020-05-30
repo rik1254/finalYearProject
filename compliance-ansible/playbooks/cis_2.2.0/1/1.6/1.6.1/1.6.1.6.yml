@@ -1,0 +1,28 @@
+---
+- name: 1.6.1.6 Ensure no unconfined daemons exist
+  block:
+    - name: Checking daemons
+      shell: "ps -eZ | egrep 'initrc' | egrep -vw 'tr|ps|egrep|bash|awk' | tr ':' ' ' | awk '{ print $NF }' | cat"
+      register: result
+      check_mode: False
+
+
+- name: To File
+  block:
+    - name: Failed
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.6.1.6 failed"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result.stdout != ''
+
+    - name: Success
+      lineinfile:
+        dest: ./results/{{ customer }}-{{ scan_type }}-{{ inventory_hostname }}.txt
+        line: "1.6.1.6 success"
+        insertafter: EOF
+      delegate_to: localhost
+      check_mode: False
+      when: result.stdout == ''

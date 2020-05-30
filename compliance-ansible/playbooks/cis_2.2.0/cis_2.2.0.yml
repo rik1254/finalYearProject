@@ -1,0 +1,180 @@
+---
+- name: Executing CIS 2.2.0 benchmark
+  hosts: targets
+  become: true
+  become_method: sudo
+  become_user: root
+  vars_prompt:
+    - name: customer
+      prompt: "What is the customer name?"
+      private: no
+
+    - name: scan_type
+      prompt: "Is this an audit or remediation? [a/r]"
+      private: no
+
+  tasks:
+    - name: setup
+      include: setup.yml
+    - name: 1.1.1.1
+      include: 1/1.1/1.1.1/1.1.1.1.yml
+    - name: 1.1.1.2
+      include: 1/1.1/1.1.1/1.1.1.2.yml
+    - name: 1.1.1.3
+      include: 1/1.1/1.1.1/1.1.1.3.yml
+    - name: 1.1.1.4
+      include: 1/1.1/1.1.1/1.1.1.4.yml
+    - name: 1.1.1.5
+      include: 1/1.1/1.1.1/1.1.1.5.yml
+    - name: 1.1.1.6
+      include: 1/1.1/1.1.1/1.1.1.6.yml
+    - name: 1.1.1.7
+      include: 1/1.1/1.1.1/1.1.1.7.yml
+    - name: 1.1.1.8
+      include: 1/1.1/1.1.1/1.1.1.8.yml
+    - name: 1.1.2
+      include: 1/1.1/1.1.2.yml
+    - name: 1.1.3
+      include: 1/1.1/1.1.3.yml
+    - name: 1.1.4
+      include: 1/1.1/1.1.4.yml
+    - name: 1.1.5
+      include: 1/1.1/1.1.4.yml
+    - name: 1.1.6
+      include: 1/1.1/1.1.6.yml
+    - name: 1.1.7
+      include: 1/1.1/1.1.7.yml
+    - name: 1.1.8
+      include: 1/1.1/1.1.8.yml
+    - name: 1.1.9
+      include: 1/1.1/1.1.9.yml
+    - name: 1.1.10
+      include: 1/1.1/1.1.10.yml
+    - name: 1.1.11
+      include: 1/1.1/1.1.11.yml
+    - name: 1.1.12
+      include: 1/1.1/1.1.12.yml
+    - name: 1.1.13
+      include: 1/1.1/1.1.13.yml
+    - name: 1.1.14
+      include: 1/1.1/1.1.14.yml
+    - name: 1.1.15
+      include: 1/1.1/1.1.15.yml
+    - name: 1.1.16
+      include: 1/1.1/1.1.16.yml
+    - name: 1.1.17
+      include: 1/1.1/1.1.17.yml
+
+    - name: 1.2.3
+      include: 1/1.2/1.2.3.yml
+
+    - name: 1.3.1
+      include: 1/1.3/1.3.1.yml
+    - name: 1.3.2
+      include: 1/1.3/1.3.2.yml
+
+    - name: 1.4.1
+      include: 1/1.4/1.4.1.yml
+    - name: 1.4.2
+      include: 1/1.4/1.4.2.yml
+    - name: 1.4.3
+      include: 1/1.4/1.4.3.yml
+
+    - name: 1.5.1
+      include: 1/1.5/1.5.1.yml
+    - name: 1.5.3
+      include: 1/1.5/1.5.3.yml
+    - name: 1.5.4
+      include: 1/1.5/1.5.4.yml
+
+    - name: 1.6.1.1
+      include: 1/1.6/1.6.1/1.6.1.1.yml
+    - name: 1.6.1.2
+      include: 1/1.6/1.6.1/1.6.1.2.yml
+    - name: 1.6.1.3
+      include: 1/1.6/1.6.1/1.6.1.3.yml
+    - name: 1.6.1.4
+      include: 1/1.6/1.6.1/1.6.1.4.yml
+    - name: 1.6.1.5
+      include: 1/1.6/1.6.1/1.6.1.5.yml
+    - name: 1.6.1.6
+      include: 1/1.6/1.6.1/1.6.1.6.yml
+    - name: 1.5.4
+      include: 1/1.5/1.5.4.yml
+
+    - name: 1.7.1.1
+      include: 1/1.7/1.7.1/1.7.1.1.yml
+    - name: 1.7.1.5
+      include: 1/1.7/1.7.1/1.7.1.5.yml
+
+    - name: 1.8
+      include: 1/1.8.yml
+
+
+    - name: 2.1.1
+      include: 2/2.1/2.1.1.yml
+    - name: 2.1.2
+      include: 2/2.1/2.1.2.yml
+    - name: 2.1.3
+      include: 2/2.1/2.1.3.yml
+    - name: 2.1.4
+      include: 2/2.1/2.1.4.yml
+    - name: 2.1.5
+      include: 2/2.1/2.1.5.yml
+    - name: 2.1.6
+      include: 2/2.1/2.1.6.yml
+    - name: 2.1.7
+      include: 2/2.1/2.1.7.yml
+
+    - name: 2.2.1.3
+      include: 2/2.2/2.2.1/2.2.1.3.yml
+
+    - name: 2.2.3
+      include: 2/2.2/2.2.3.yml
+    - name: 2.2.4
+      include: 2/2.2/2.2.4.yml
+    - name: 2.2.5
+      include: 2/2.2/2.2.5.yml
+    - name: 2.2.6
+      include: 2/2.2/2.2.6.yml
+    - name: 2.2.7
+      include: 2/2.2/2.2.7.yml
+    - name: 2.2.8
+      include: 2/2.2/2.2.8.yml
+    - name: 2.2.9
+      include: 2/2.2/2.2.9.yml
+    - name: 2.2.10
+      include: 2/2.2/2.2.10.yml
+    - name: 2.2.11
+      include: 2/2.2/2.2.11.yml
+    - name: 2.2.12
+      include: 2/2.2/2.2.12.yml
+    - name: 2.2.13
+      include: 2/2.2/2.2.13.yml
+    - name: 2.2.14
+      include: 2/2.2/2.2.14.yml
+    - name: 2.2.15
+      include: 2/2.2/2.2.15.yml
+    - name: 2.2.16
+      include: 2/2.2/2.2.16.yml
+    - name: 2.2.17
+      include: 2/2.2/2.2.17.yml
+    - name: 2.2.18
+      include: 2/2.2/2.2.18.yml
+    - name: 2.2.19
+      include: 2/2.2/2.2.19.yml
+    - name: 2.2.20
+      include: 2/2.2/2.2.20.yml
+    - name: 2.2.21
+      include: 2/2.2/2.2.21.yml
+
+    - name: 2.3.1
+      include: 2/2.3/2.3.1.yml
+    - name: 2.3.2
+      include: 2/2.3/2.3.2.yml
+    - name: 2.3.3
+      include: 2/2.3/2.3.3.yml
+    - name: 2.3.4
+      include: 2/2.3/2.3.4.yml
+    - name: 2.3.5
+      include: 2/2.3/2.3.5.yml
