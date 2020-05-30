@@ -32,7 +32,7 @@ signal.signal(signal.SIGTSTP, signal.SIG_IGN)
 
 # Compliance Scanner
 # P16036657
-# CTEC####
+# CTEC3301
 
 
 def start():
@@ -52,7 +52,7 @@ def start():
 \____/ \___\__,_|_| |_|_| |_|\___|_|
 
              Created by:  Rikki Wright
-             Module Code: CTEC#### '''
+             Module Code: CTEC3301 '''
 # Font source: http://patorjk.com/software/taag/#p=display&f=Doom&t=Type%20Something%20
 
     banner(section)
