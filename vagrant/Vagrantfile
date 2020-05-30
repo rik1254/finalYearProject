@@ -1,0 +1,49 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# All Vagrant configuration is done below. The "2" in Vagrant.configure
+# configures the configuration version (we support older styles for
+# backwards compatibility). Please don't change it unless you know what
+# you're doing.
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define "target1" do |subconfig|
+    subconfig.vm.box = "bento/centos-7.7"
+    subconfig.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 1
+      v.name = "target1"
+    end
+    subconfig.vm.network "private_network", ip: "192.168.2.111",
+      virtualbox__intnet: true
+    subconfig.vm.hostname = "target1.foo.local"
+    subconfig.vm.provision "shell", path: "target1.sh"
+  end
+
+  config.vm.define "target2" do |subconfig|
+    subconfig.vm.box = "bento/centos-7.7"
+    subconfig.vm.provider "virtualbox" do |v|
+      v.memory = 1024
+      v.cpus = 1
+      v.name = "target2"
+    end
+    subconfig.vm.network "private_network", ip: "192.168.2.112",
+      virtualbox__intnet: true
+    subconfig.vm.hostname = "target2.foo.local"
+    subconfig.vm.provision "shell", path: "target2.sh"
+  end
+
+  config.vm.define "master" do |subconfig|
+    subconfig.vm.box = "bento/centos-7.7"
+    subconfig.vm.provider "virtualbox" do |v|
+      v.memory = 2048
+      v.cpus = 2
+      v.name = "ansibleMaster"
+    end
+    subconfig.vm.network "private_network", ip: "192.168.2.110",
+      virtualbox__intnet: true
+    subconfig.vm.hostname = "master.foo.local"
+    subconfig.vm.provision "shell", path: "master.sh"
+  end
+end
